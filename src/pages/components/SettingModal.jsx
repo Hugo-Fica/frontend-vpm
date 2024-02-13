@@ -86,7 +86,7 @@ export const SettingModal = () => {
     putCriteria(filterCriteria?.id, criteria)
   }
   useEffect(() => {
-    getSetting('187a0acb-89cf-45f7-aea6-5b0c3e2c47ab')
+    getSetting('6d3e7758-ba2b-40dc-a8b4-39b5bf293238')
   }, [])
 
   return (
