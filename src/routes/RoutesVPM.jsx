@@ -1,35 +1,34 @@
-
-import { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { RoutesAuth } from './RoutesAuth';
-import { SignIn } from '../pages/SignIn';
-import jwtDecode from 'jwt-decode';
-import Modal from '@mui/material/Modal';
-import { ModalLogin } from '../pages/components/ModalLogin';
-import { useAuthSotre } from '../store/auth-store';
+import { useState, useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import { RoutesAuth } from './RoutesAuth'
+import { SignIn } from '../pages/SignIn'
+import jwtDecode from 'jwt-decode'
+import Modal from '@mui/material/Modal'
+import { ModalLogin } from '../pages/components/ModalLogin'
+import { useAuthStore } from '../store/auth-store'
 
 export const RoutesVPM = () => {
-  const { status, expiresAt, token } = useAuthSotre((state) => state)
-  const [showModal, setShowModal] = useState(false);
+  const { status, expiresAt, token } = useAuthStore((state) => state)
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    setShowModal(false);
+    setShowModal(false)
     if (status === 'authenticated') {
-      const { exp } = jwtDecode(token);
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeRemaining = exp - currentTime;
+      const { exp } = jwtDecode(token)
+      const currentTime = Math.floor(Date.now() / 1000)
+      const timeRemaining = exp - currentTime
 
       if (timeRemaining < 300) {
-        setShowModal(true);
+        setShowModal(true)
       }
       const timeout = setTimeout(() => {
-        setShowModal(true);
-      }, (expiresAt - Math.floor(Date.now() / 1000) - 300) * 1000);
+        setShowModal(true)
+      }, (expiresAt - Math.floor(Date.now() / 1000) - 300) * 1000)
       return () => {
-        clearTimeout(timeout);
-      };
+        clearTimeout(timeout)
+      }
     }
-  }, [status, expiresAt, token]);
+  }, [status, expiresAt, token])
 
   return (
     <>
@@ -45,5 +44,5 @@ export const RoutesVPM = () => {
         <ModalLogin />
       </Modal>
     </>
-  );
-};
+  )
+}

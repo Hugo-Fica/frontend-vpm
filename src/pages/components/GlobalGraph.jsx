@@ -63,7 +63,6 @@ export const GlobalGraph = () => {
       y: { stacked: true, title: { display: true, text: 'Value' } },
     },
   }
-  console.log(vectors)
   return (
     <Grid
       container

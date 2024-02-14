@@ -8,7 +8,7 @@ import { useAreaStore } from '../../store/area-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
 import { useActivityStore } from '../../store/activity-store'
 import { useVectorStore } from '../../store/vector-store'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { calculateSlider, transformData2 } from '../../helpers/datas/data'
 import { SliderPeriod } from './SliderPeriod'
 import vectorIcon from '../../assets/vector4.png'
@@ -69,7 +69,7 @@ export const AddModal3 = () => {
   const subareas = useSubAreaStore((state) => state.subareas)
   const activitys = useActivityStore((state) => state.activity)
   const { loading, postVector } = useVectorStore((state) => state)
-  const uid = useAuthSotre((state) => state.uid)
+  const uid = useAuthStore((state) => state.uid)
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => {
@@ -110,6 +110,7 @@ export const AddModal3 = () => {
       type_vector: 3,
     }
     postVector(vector, uid, transformedData)
+    setOpen(false)
   }
   return (
     <>

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { loginUser } from '../helpers/api/userAuth'
 import { getUserByID } from '../helpers/api/user'
-export const useAuthSotre = create(
+export const useAuthStore = create(
   devtools(
     persist(
       (set) => {
@@ -35,7 +35,6 @@ export const useAuthSotre = create(
                 state: s,
                 role_name: rn,
               } = await getUserByID(u)
-              console.log(u)
               set(
                 {
                   status: 'authenticated',

@@ -4,7 +4,7 @@ import { useCriteriaStore } from '../../store/criteria-store'
 import { useAreaStore } from '../../store/area-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
 import { useActivityStore } from '../../store/activity-store'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { useVectorStore } from '../../store/vector-store'
 import { calculateCriteriaOS, transformData } from '../../helpers/datas/data'
 import { Modal, Box, Typography, Button, Grid, TextField } from '@mui/material'
@@ -69,7 +69,7 @@ export const AddModal2 = () => {
   const areas = useAreaStore((state) => state.areas)
   const subareas = useSubAreaStore((state) => state.subareas)
   const activitys = useActivityStore((state) => state.activity)
-  const uid = useAuthSotre((state) => state.uid)
+  const uid = useAuthStore((state) => state.uid)
   const { loading, postOperationalStreet } = useVectorStore((state) => state)
   const [valueKnobs, setValueKnobs] = useState([])
   const [valueEquipVector, setValueEquipVector] = useState([])
@@ -131,6 +131,7 @@ export const AddModal2 = () => {
       transformedData,
       operational_street
     )
+    setOpen(false)
   }
   return (
     <>

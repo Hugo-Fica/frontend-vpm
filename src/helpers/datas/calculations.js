@@ -69,18 +69,3 @@ export const calculateGlobalLeakage = (vectors = [], leakage = 0) => {
   })
   return { globalLeakage, sumsPos }
 }
-
-// export const calculateVectorLeakage = (vectors = [], leakage = 0) => {
-//   if (!Array.isArray(vectors)) {
-//     return {
-//       vectorLeakage: [],
-//     };
-//   }
-//   const sumVectorLeak = vectors.map((base) => ({ ...base }));
-//   sumVectorLeak.forEach((subVectors) => {
-//     subVectors.vectors.forEach((v) => {
-//       v.value = v.value + v.value * (leakage / 100);
-//     });
-//   });
-//   console.log(sumVectorLeak);
-// };

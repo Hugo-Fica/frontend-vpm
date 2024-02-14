@@ -12,7 +12,6 @@ import activityPng from '../../assets/activityGraph.png'
 
 export const NavBar = () => {
   const [navbar, setNavbar] = useState(1)
-  console.log(navbar)
   return (
     <Box component='nav' sx={{}}>
       <Drawer

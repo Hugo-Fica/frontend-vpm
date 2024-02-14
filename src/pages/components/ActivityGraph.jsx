@@ -65,7 +65,6 @@ export const ActivityGraph = () => {
       y: { stacked: true, title: { display: true, text: 'Value' } },
     },
   }
-  console.log(activityVectors)
   return (
     <Grid
       container

@@ -44,13 +44,6 @@ export const DragTableGlobal = () => {
       vectorId: ui.node.id,
       position: { x: position.position, y: 0 },
     })
-    setPeriodos(
-      position.vectors.slice().sort((a, b) => a.period - b.period)[0].period - 1
-    )
-    setPeriodosnegativo(
-      -position.vectors.slice().sort((a, b) => a.period - b.period)[0].period +
-        1
-    )
   }
   const [prevX, setPrevX] = useState(0)
 
@@ -88,36 +81,36 @@ export const DragTableGlobal = () => {
               ? item.period + periodos
               : periodosnegativo < 0
               ? item.period + periodosnegativo
-              : j,
+              : j + 1,
         }
         putValueVector(item.id, pos)
-        console.log(pos)
       }
       putVector(id, pos)
     }
-    console.log(periodos, periodosnegativo)
   }
   const onDeleteVector = async (id = '') => {
     delVector(id)
   }
 
   const newData = transformData(result)
-  const suma_leakage = newData.map((n) => {
-    const totalValue = Array.isArray(vectors)
-      ? vectors.reduce((acc, v) => {
-          const matchingItem = v.vectors.find((i) => i.period === n.period)
-          return (
-            acc +
-            (matchingItem ? matchingItem.value * (value_leakage / 100) : 0)
-          )
-        }, 0)
-      : 0
+  const suma_leakage = newData
+    .map((n) => {
+      const totalValue = Array.isArray(vectors)
+        ? vectors.reduce((acc, v) => {
+            const matchingItem = v.vectors.find((i) => i.period === n.period)
+            return (
+              acc +
+              (matchingItem ? matchingItem.value * (value_leakage / 100) : 0)
+            )
+          }, 0)
+        : 0
 
-    return {
-      period: n.period,
-      value: totalValue + n.value,
-    }
-  })
+      return {
+        period: n.period,
+        value: totalValue + n.value,
+      }
+    })
+    .slice(0, period)
 
   const sumarValoresPorPeriodo = () => {
     const sumByPeriod = {}
@@ -177,19 +170,21 @@ export const DragTableGlobal = () => {
 
   const sum_total_values = sumarValoresPorPeriodo2()
   const sum_values = sumarValoresPorPeriodo()
-  const sum_total = sum_values.map((n) => {
-    const totalValue = vectors.reduce((acc, v) => {
-      const matchingItem = v.vectors.find((i) => i.period === n.period)
-      return (
-        acc + (matchingItem ? matchingItem.value * (value_leakage / 100) : 0)
-      )
-    }, 0)
+  const sum_total = sum_values
+    .map((n) => {
+      const totalValue = vectors.reduce((acc, v) => {
+        const matchingItem = v.vectors.find((i) => i.period === n.period)
+        return (
+          acc + (matchingItem ? matchingItem.value * (value_leakage / 100) : 0)
+        )
+      }, 0)
 
-    return {
-      period: n.period,
-      value: totalValue + n.totalValue,
-    }
-  })
+      return {
+        period: n.period,
+        value: totalValue + n.totalValue,
+      }
+    })
+    .slice(0, period)
   return (
     <Grid
       container
@@ -276,7 +271,7 @@ export const DragTableGlobal = () => {
                     onDrag={onDrag}
                     onStop={onStop}
                   >
-                    <TableRow key={v.id} id={v.id}>
+                    <TableRow key={v.id} id={v.id} sx={{ cursor: 'pointer' }}>
                       {v.vectors
                         .slice()
                         .sort((a, b) => a.period - b.period)

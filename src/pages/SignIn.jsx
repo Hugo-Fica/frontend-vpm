@@ -5,42 +5,39 @@ import {
   Grid,
   TextField,
   Typography,
-} from '@mui/material';
-import { useMemo, useState } from 'react';
-import { useForm } from '../hooks/useForm';
-import { useNavigate } from 'react-router-dom';
-import { useAuthSotre } from '../store/auth-store';
+} from '@mui/material'
+import { useMemo, useState } from 'react'
+import { useForm } from '../hooks/useForm'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../store/auth-store'
 
 const formValidations = {
   email: [(value) => value.length > 1, 'This field is required'],
   pass: [(value) => value.length > 1, 'This field is required'],
-};
+}
 const formData = {
   email: '',
   pass: '',
-};
+}
 export const SignIn = () => {
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false)
   const { email, pass, onInputChange, emailValid, passValid, formState } =
-    useForm(formData, formValidations);
-  const {status,
-    errorMessage,
-    login,
-  } = useAuthSotre((state) => state)
+    useForm(formData, formValidations)
+  const { status, errorMessage, login } = useAuthStore((state) => state)
 
-  const isChecking = useMemo(() => status === 'checking', [status]);
-  const nav = useNavigate();
+  const isChecking = useMemo(() => status === 'checking', [status])
+  const nav = useNavigate()
 
-  const onSubmit =  (e) => {
-    e.preventDefault();
-    setFormSubmitted(true);
+  const onSubmit = (e) => {
+    e.preventDefault()
+    setFormSubmitted(true)
     const user = {
       email: formState.email,
       pass: formState.pass,
-    };
+    }
     login(user)
-    nav('VentilationProjectManager/home');
-  };
+    nav('VentilationProjectManager/home')
+  }
   return (
     <form onSubmit={onSubmit}>
       <Container
@@ -121,5 +118,5 @@ export const SignIn = () => {
         </Grid>
       </Container>
     </form>
-  );
-};
+  )
+}

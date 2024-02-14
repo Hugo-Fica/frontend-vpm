@@ -4,7 +4,6 @@ export const getSetting = async (idS = null) => {
   if (!idS) return
   try {
     const { data } = await axiosSetting.get(`/${idS}`)
-    console.log(data)
     const { unit, leakage, value_leakage, period, id } = data
     return {
       ok: true,
