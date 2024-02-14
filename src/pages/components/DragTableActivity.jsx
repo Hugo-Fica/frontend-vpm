@@ -137,7 +137,7 @@ export const DragTableActivity = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell variant='head'>Area Vector</TableCell>
+                <TableCell variant='head'>Activity Vector</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -200,7 +200,7 @@ export const DragTableActivity = () => {
                     onDrag={onDrag}
                     onStop={onStop}
                   >
-                    <TableRow key={v.id} id={v.id}>
+                    <TableRow key={v.id} id={v.id} sx={{ cursor: 'pointer' }}>
                       {v.vectors
                         .slice()
                         .sort((a, b) => a.period - b.period)

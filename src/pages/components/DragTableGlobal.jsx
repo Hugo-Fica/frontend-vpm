@@ -271,7 +271,7 @@ export const DragTableGlobal = () => {
                     onDrag={onDrag}
                     onStop={onStop}
                   >
-                    <TableRow key={v.id} id={v.id}>
+                    <TableRow key={v.id} id={v.id} sx={{ cursor: 'pointer' }}>
                       {v.vectors
                         .slice()
                         .sort((a, b) => a.period - b.period)
