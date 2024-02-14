@@ -23,7 +23,7 @@ import { useAreaStore } from '../../store/area-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
 import { useActivityStore } from '../../store/activity-store'
 import { useVectorStore } from '../../store/vector-store'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { useSettingStore } from '../../store/setting-store'
 import { generateData, transformData } from '../../helpers/datas/data'
 import vectorIcon from '../../assets/vector3.png'
@@ -79,7 +79,7 @@ export const AddModal4 = () => {
   const activitys = useActivityStore((state) => state.activity)
   const { loading } = useVectorStore((state) => state)
   const isChecking = useMemo(() => loading === 'checking', [loading])
-  const uid = useAuthSotre((state) => state.uid)
+  const uid = useAuthStore((state) => state.uid)
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => {

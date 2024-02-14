@@ -23,7 +23,7 @@ import { useActivityStore } from '../../store/activity-store'
 import { useAreaStore } from '../../store/area-store'
 import { useCriteriaStore } from '../../store/criteria-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { useVectorStore } from '../../store/vector-store'
 const style = {
   position: 'absolute',
@@ -72,7 +72,7 @@ export const EditModal = ({ vector: editVector }) => {
   const areas = useAreaStore((state) => state.areas)
   const subareas = useSubAreaStore((state) => state.subareas)
   const activitys = useActivityStore((state) => state.activity)
-  const { uid } = useAuthSotre((state) => state.uid)
+  const { uid } = useAuthStore((state) => state.uid)
   const putVector = useVectorStore((state) => state.putVector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => {

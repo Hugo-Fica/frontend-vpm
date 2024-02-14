@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { loginUser } from '../helpers/api/userAuth'
 import { getUserByID } from '../helpers/api/user'
-export const useAuthSotre = create(
+export const useAuthStore = create(
   devtools(
     persist(
       (set) => {

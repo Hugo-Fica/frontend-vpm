@@ -8,11 +8,11 @@ import {
 } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { InputArea } from './InputArea'
 
 export const Sidebar = () => {
-  const { user_name, resetUser } = useAuthSotre((state) => state)
+  const { user_name, resetUser } = useAuthStore((state) => state)
   const nav = useNavigate()
 
   const onClickLogout = () => {

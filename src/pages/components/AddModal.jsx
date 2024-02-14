@@ -13,7 +13,7 @@ import { useActivityStore } from '../../store/activity-store'
 import { useAreaStore } from '../../store/area-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
 import { useCriteriaStore } from '../../store/criteria-store'
-import { useAuthSotre } from '../../store/auth-store'
+import { useAuthStore } from '../../store/auth-store'
 import { useVectorStore } from '../../store/vector-store'
 import vectorIcon from '../../assets/vector.png'
 const style = {
@@ -62,7 +62,7 @@ export const AddModal = () => {
   const areas = useAreaStore((state) => state.areas)
   const subareas = useSubAreaStore((state) => state.subareas)
   const activitys = useActivityStore((state) => state.activity)
-  const uid = useAuthSotre((state) => state.uid)
+  const uid = useAuthStore((state) => state.uid)
   const { loading, postVector } = useVectorStore((state) => state)
   const [valueKnobs, setValueKnobs] = useState([])
   const isChecking = useMemo(() => loading === 'checking', [loading])
