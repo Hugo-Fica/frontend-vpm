@@ -110,6 +110,7 @@ export const AddModal3 = () => {
       type_vector: 3,
     }
     postVector(vector, uid, transformedData)
+    setOpen(false)
   }
   return (
     <>

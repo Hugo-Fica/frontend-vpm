@@ -194,7 +194,7 @@ export const AddModal4 = () => {
       }
       const transformedData = transformData(element.values)
       await postVector(vector, uid, transformedData)
-      console.log(vector, uid, transformedData)
+      setOpen(false)
     }
   }
   const updAvailability = (id, e) => {

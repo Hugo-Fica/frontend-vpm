@@ -131,6 +131,7 @@ export const AddModal2 = () => {
       transformedData,
       operational_street
     )
+    setOpen(false)
   }
   return (
     <>

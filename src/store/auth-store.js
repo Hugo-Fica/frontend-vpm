@@ -35,7 +35,6 @@ export const useAuthSotre = create(
                 state: s,
                 role_name: rn,
               } = await getUserByID(u)
-              console.log(u)
               set(
                 {
                   status: 'authenticated',
