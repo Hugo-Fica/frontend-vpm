@@ -8,11 +8,14 @@ import {
   postOperationalStreet,
   postVector,
   putEquipVector,
+  putOperationalStreets,
 } from '../helpers/api/vector'
 import {
   createValue,
   createValueEquip,
   createValueOP,
+  putEquipVectorValue,
+  putOperationalStreetsValue,
   putValue,
 } from '../helpers/datas/data'
 import { newPositionForVector } from '../helpers/datas/calculations'
@@ -40,6 +43,7 @@ export const useVectorStore = create(
           user: null,
           values: [],
           message: null,
+          type_vector: 0,
           getVectors: async () => {
             const { ok, data, errorMessage } = await getVectors()
             if (ok) {
@@ -70,6 +74,7 @@ export const useVectorStore = create(
               vector,
               values,
               errorMessage,
+              type_vector,
             } = await getVectorById(uid)
             if (ok) {
               set(
@@ -88,6 +93,7 @@ export const useVectorStore = create(
                   user: user,
                   vectors: vector,
                   values: values,
+                  type_vector: type_vector,
                 },
                 false,
                 'FETCH_VECTOR_BY_ID'
@@ -168,6 +174,11 @@ export const useVectorStore = create(
             } else {
               set({ errorMessage: errorMessage })
             }
+          },
+          putOperationalStreet: async (evv, osv, os) => {
+            await putOperationalStreets(os)
+            await putEquipVectorValue(evv)
+            await putOperationalStreetsValue(osv)
           },
           delVector: async (id) => {
             const currentVector = get().vectors

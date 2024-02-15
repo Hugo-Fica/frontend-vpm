@@ -2,7 +2,12 @@ import {
   postValueEquipVector,
   putValueEquipVector,
 } from '../api/valueEquipVector'
-import { postEquipVectorValue, postOperationalStreetValue } from '../api/vector'
+import {
+  postEquipVectorValue,
+  postOperationalStreetValue,
+  putEquipVectorValues,
+  putOperationalStreetsValues,
+} from '../api/vector'
 // ? por subir
 export const generateData = (period) => {
   const result = []
@@ -177,7 +182,18 @@ export const putValue = async (data = [], vectors = {}) => {
     await putValueEquipVector(id, newValue)
   }
 }
-export const modPos = () => {}
+export const putEquipVectorValue = async (data) => {
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i]
+    await putEquipVectorValues(element.id, element)
+  }
+}
+export const putOperationalStreetsValue = async (data) => {
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i]
+    await putOperationalStreetsValues(element.id, element)
+  }
+}
 
 export const calculateCriteriaOS = (
   result = [],
@@ -199,7 +215,7 @@ export const calculateCriteriaOS = (
       }))
       return { newResult }
     }
-    if (disable2 === 'm/s' || disable === 'ft/m') {
+    if (disable2 === 'm/s' || disable2 === 'ft/m') {
       const newResult = result.map((item, i) => ({
         x: item.x,
         y: (
@@ -211,7 +227,7 @@ export const calculateCriteriaOS = (
       }))
       return { newResult }
     }
-    if (disable === 'm3/kW' || disable === 'cfm/HP') {
+    if (disable2 === 'm3/kW' || disable2 === 'cfm/HP') {
       //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
       // ? VER COMO MODIFICAR DATOS.
       const newResult = result.map((item, i) => ({
@@ -244,7 +260,7 @@ export const calculateCriteriaOS = (
       }))
       return { newResult }
     }
-    if (disable2 === 'm/s' || disable === 'ft/m') {
+    if (disable2 === 'm/s' || disable2 === 'ft/m') {
       const newResult = result.map((item, i) => ({
         x: item.x,
         y: (
@@ -259,7 +275,7 @@ export const calculateCriteriaOS = (
       }))
       return { newResult }
     }
-    if (disable === 'm3/kW' || disable === 'cfm/HP') {
+    if (disable2 === 'm3/kW' || disable2 === 'cfm/HP') {
       //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
       // ? VER COMO MODIFICAR DATOS.
       const newResult = result.map((item, i) => ({
@@ -283,8 +299,6 @@ export const calculateCriteriaOS = (
     }
   }
   if (disable === 'm3/kW' || disable === 'cfm/HP') {
-    //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
-    // ? VER COMO MODIFICAR DATOS.
     if (disable2 === 'Fix Q') {
       const newResult = result.map((item, i) => ({
         x: item.x,
@@ -295,7 +309,7 @@ export const calculateCriteriaOS = (
       }))
       return { newResult }
     }
-    if (disable2 === 'm/s' || disable === 'ft/m') {
+    if (disable2 === 'm/s' || disable2 === 'ft/m') {
       const newResult = result.map((item, i) => ({
         x: item.x,
         y: (
@@ -308,7 +322,162 @@ export const calculateCriteriaOS = (
 
       return { newResult }
     }
-    if (disable === 'm3/kW' || disable === 'cfm/HP') {
+    if (disable2 === 'm3/kW' || disable2 === 'cfm/HP') {
+      //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
+      // ? VER COMO MODIFICAR DATOS.
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          m3kW * formState.power_input * availabilityDecimal * item?.y +
+          m3kW * formState.power_input_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    } else {
+      const newResult = result.map((item) => ({
+        x: item.x,
+        y: item.y,
+      }))
+      return { newResult }
+    }
+  } else {
+    const newResult = result.map((item) => ({
+      x: item.x,
+      y: item.y,
+    }))
+    return { newResult }
+  }
+}
+export const calculateCriteriaOS2 = (
+  result = [],
+  disable = '',
+  formState = {},
+  disable2 = '',
+  valueEquipVector = [],
+  m3kW = 0
+) => {
+  const availabilityDecimal = formState.availability / 100
+  if (disable.disable === 'Fix Q') {
+    if (disable2.disable === 'Fix Q') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.fix_q * availabilityDecimal * item?.y +
+          formState.fix_q_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    }
+    if (disable2.disable === 'm/s' || disable2.disable === 'ft/m') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.fix_q * availabilityDecimal * item?.y +
+          formState.air_velocity_2 *
+            formState.area_m2_2 *
+            (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    }
+    if (disable2.disable === 'm3/kW' || disable2.disable === 'cfm/HP') {
+      //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
+      // ? VER COMO MODIFICAR DATOS.
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.fix_q * availabilityDecimal * item?.y +
+          m3kW * formState.power_input_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    } else {
+      const newResult = result.map((item) => ({
+        x: item.x,
+        y: item.y,
+      }))
+      return { newResult }
+    }
+  }
+  if (disable.disable === 'm/s' || disable.disable === 'ft/m') {
+    if (disable2.disable === 'Fix Q') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.air_velocity *
+            formState.area_m2 *
+            availabilityDecimal *
+            item?.y +
+          formState.fix_q_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    }
+    if (disable2.disable === 'm/s' || disable2.disable === 'ft/m') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.air_velocity *
+            formState.area_m2 *
+            availabilityDecimal *
+            item?.y +
+          formState.air_velocity_2 *
+            formState.area_m2_2 *
+            (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    }
+    if (disable2.disable === 'm3/kW' || disable2.disable === 'cfm/HP') {
+      //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
+      // ? VER COMO MODIFICAR DATOS.
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          formState.air_velocity *
+            formState.area_m2 *
+            availabilityDecimal *
+            item?.y +
+          m3kW * formState.power_input_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+
+      return { newResult }
+    } else {
+      const newResult = result.map((item) => ({
+        x: item.x,
+        y: item.y,
+      }))
+      return { newResult }
+    }
+  }
+  if (disable.disable === 'm3/kW' || disable.disable === 'cfm/HP') {
+    //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
+    // ? VER COMO MODIFICAR DATOS.
+    if (disable2.disable === 'Fix Q') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          m3kW * formState.power_input * availabilityDecimal * item?.y +
+          formState.fix_q_2 * (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+      return { newResult }
+    }
+    if (disable2.disable === 'm/s' || disable2.disable === 'ft/m') {
+      const newResult = result.map((item, i) => ({
+        x: item.x,
+        y: (
+          m3kW * formState.power_input * availabilityDecimal * item?.y +
+          formState.air_velocity_2 *
+            formState.area_m2_2 *
+            (valueEquipVector[i]?.y - item?.y)
+        ).toFixed(2),
+      }))
+
+      return { newResult }
+    }
+    if (disable2.disable === 'm3/kW' || disable2.disable === 'cfm/HP') {
       //! MODIFICAR CALCULO SEGUN VALOR DEL CRITERIO.
       // ? VER COMO MODIFICAR DATOS.
       const newResult = result.map((item, i) => ({

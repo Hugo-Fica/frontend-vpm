@@ -85,6 +85,8 @@ export const EditModal = ({ vector: editVector }) => {
       .map((x) => x.name)[0]
     return { disable }
   }
+  const criteriasfilter = criterias.filter((c) => c.type_vector !== 2)
+
   const { disable } = disabled(criteria)
   const transform = transformGraphs(editVector)
   const { newResult } = calculateCriteria(transform, disable, formState)
@@ -197,7 +199,7 @@ export const EditModal = ({ vector: editVector }) => {
                   title={'Criteria'}
                   name={'criteria'}
                   size={180}
-                  data={criterias}
+                  data={criteriasfilter}
                 />
               </Grid>
               <Grid item>

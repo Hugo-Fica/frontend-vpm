@@ -4,17 +4,17 @@ import { generateData } from '../../helpers/datas/data'
 import { useSettingStore } from '../../store/setting-store'
 
 export const KnobsFor2 = ({
-  transform,
-  valueKnobs,
+  valueKnobs2,
+  valueEquipVector2,
   setValueKnobs,
   setValueEquipVector,
 }) => {
   const period = useSettingStore((state) => state.period)
   const { result } = generateData(period)
   const svgRef = useRef(null)
-  const [data, setData] = useState(transform || result)
+  const [data, setData] = useState(valueKnobs2 || result)
   const [secondKnobData, setSecondKnobData] = useState(
-    generateData(period).result
+    valueEquipVector2 || generateData(period).result
   )
   useEffect(() => {
     const svg = d3.select(svgRef.current)

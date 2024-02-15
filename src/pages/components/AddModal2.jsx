@@ -291,7 +291,7 @@ export const AddModal2 = () => {
                   symbol={'KW'}
                   type={'number'}
                   min={0}
-                  disable={disable2 !== 'm3/kW' && disable !== 'cfm/HP'}
+                  disable={disable2 !== 'm3/kW' && disable2 !== 'cfm/HP'}
                   value={power_input_2}
                   onInputChange={onInputChange}
                 />
@@ -313,7 +313,7 @@ export const AddModal2 = () => {
                     symbol={'m/s'}
                     type={'number'}
                     min={0}
-                    disable={disable2 !== 'm/s' && disable !== 'ft/m'}
+                    disable={disable2 !== 'm/s' && disable2 !== 'ft/m'}
                     value={air_velocity_2}
                     onInputChange={onInputChange}
                   />
@@ -325,7 +325,7 @@ export const AddModal2 = () => {
                     title={'Area m2 2'}
                     type={'number'}
                     min={0}
-                    disable={disable2 !== 'm/s' && disable !== 'ft/m'}
+                    disable={disable2 !== 'm/s' && disable2 !== 'ft/m'}
                     value={area_m2_2}
                     onInputChange={onInputChange}
                   />
@@ -354,7 +354,6 @@ export const AddModal2 = () => {
             >
               <Grid item sx={{ mt: 3 }}>
                 <KnobsFor2
-                  valueKnobs={valueKnobs}
                   setValueKnobs={setValueKnobs}
                   setValueEquipVector={setValueEquipVector}
                 />
