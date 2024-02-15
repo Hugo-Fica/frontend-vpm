@@ -34,6 +34,7 @@ export const getVectorById = async (uid = '') => {
       user,
       vector,
       values,
+      type_vector,
     } = data
     return {
       ok: true,
@@ -51,6 +52,23 @@ export const getVectorById = async (uid = '') => {
       user,
       vector,
       values,
+      data,
+      type_vector,
+    }
+  } catch (err) {
+    const { errors } = err.response.data
+    const errorMessage = errors.map((e) => e.msg)[0]
+    return {
+      ok: false,
+      errorMessage,
+    }
+  }
+}
+export const getOperationalStreest = async (vector_id = '') => {
+  try {
+    const { data } = await axiosVector.get(`/operational/${vector_id}`)
+    return {
+      ok: true,
       data,
     }
   } catch (err) {
@@ -140,6 +158,46 @@ export const putEquipVector = async (id = null, datas = null) => {
       ok: true,
       message: msg,
     }
+  } catch (err) {
+    const { errors } = err.response.data
+    const errorMessage = errors.map((e) => e.msg)[0]
+    return {
+      ok: false,
+      errorMessage,
+    }
+  }
+}
+export const putOperationalStreets = async (os) => {
+  try {
+    const { data } = await axiosVector.put(`/os/${os.id}`, os)
+    return { ok: true, data }
+  } catch (err) {
+    console.log(err)
+    const { errors } = err.response.data
+    const errorMessage = errors.map((e) => e.msg)[0]
+    return {
+      ok: false,
+      errorMessage,
+    }
+  }
+}
+export const putOperationalStreetsValues = async (id, osv) => {
+  try {
+    const { data } = await axiosVector.put(`/osv/${id}`, osv)
+    return { ok: true, data }
+  } catch (err) {
+    const { errors } = err.response.data
+    const errorMessage = errors.map((e) => e.msg)[0]
+    return {
+      ok: false,
+      errorMessage,
+    }
+  }
+}
+export const putEquipVectorValues = async (id, evv) => {
+  try {
+    const { data } = await axiosVector.put(`/evv/${id}`, evv)
+    return { ok: true, data }
   } catch (err) {
     const { errors } = err.response.data
     const errorMessage = errors.map((e) => e.msg)[0]

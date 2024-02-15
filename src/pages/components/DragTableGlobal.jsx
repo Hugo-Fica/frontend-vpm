@@ -20,6 +20,7 @@ import {
 import { useSettingStore } from '../../store/setting-store'
 import { useVectorStore } from '../../store/vector-store'
 import { EditModal } from './EditModal'
+import { EditModal2 } from './EditModal2'
 
 export const DragTableGlobal = () => {
   const { vectors, delVector, putValueVector, putVector } = useVectorStore(
@@ -217,7 +218,10 @@ export const DragTableGlobal = () => {
                       <IconButton onClick={() => onDeleteVector(item.id)}>
                         <DeleteIcon color='error' fontSize='small' />
                       </IconButton>
-                      <EditModal vector={item} />
+                      {item.type_vector === 1 && <EditModal vector={item} />}
+                      {item.type_vector === 2 && (
+                        <EditModal2 editVector={item} />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

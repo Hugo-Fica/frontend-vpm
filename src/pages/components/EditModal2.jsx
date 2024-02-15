@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Modal,
   Box,
@@ -8,36 +7,39 @@ import {
   TextField,
   IconButton,
 } from '@mui/material'
-import { SelectOption } from './SelectOption'
-import { useForm } from '../../hooks/useForm'
-import { TextFieldCustom } from './TexfieldCustom'
-import { Knobs } from './Knobs'
 import EditIcon from '@mui/icons-material/Edit'
-import {
-  calculateCriteria,
-  reverseTransformData,
-  transformData,
-  transformGraphs,
-} from '../../helpers/datas/data'
+import { useEffect, useState } from 'react'
+import { getOperationalStreest } from '../../helpers/api/vector'
 import { useActivityStore } from '../../store/activity-store'
 import { useAreaStore } from '../../store/area-store'
 import { useCriteriaStore } from '../../store/criteria-store'
 import { useSubAreaStore } from '../../store/sub-area-store'
 import { useAuthStore } from '../../store/auth-store'
+import { TextFieldCustom } from './TexfieldCustom'
+import { SelectOption } from './SelectOption'
+import { useForm } from '../../hooks/useForm'
+import { calculateCriteriaOS2, transformData } from '../../helpers/datas/data'
+import { KnobsFor2 } from './KnobsFor2'
 import { useVectorStore } from '../../store/vector-store'
+
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 1000,
-  height: 600,
+  height: 720,
   bgcolor: 'background.paper',
+  borderRadius: 2,
   boxShadow: 24,
   p: 4,
 }
-
-export const EditModal = ({ vector: editVector }) => {
+export const EditModal2 = ({ editVector }) => {
+  const [operational, setOperational] = useState()
+  const [valueKnobs, setValueKnobs] = useState()
+  const [valueEquipVector, setValueEquipVector] = useState()
+  const [valueKnobs2, setValueKnobs2] = useState()
+  const [valueEquipVector2, setValueEquipVector2] = useState()
   const formData = {
     vector: editVector.vector || '',
     availability: editVector.availability,
@@ -49,7 +51,12 @@ export const EditModal = ({ vector: editVector }) => {
     area: editVector.area_id || '',
     sub_area: editVector.sub_area_id || '',
     activity: editVector.activity_id || '',
-    criteria: editVector.criteria_id || '',
+    criteria: editVector.criteria_id,
+    power_input_2: operational?.power_input_2 || 0,
+    air_velocity_2: operational?.air_velocity_2 || 0,
+    area_m2_2: operational?.area_m2_2 || 0,
+    fix_q_2: operational?.fix_q_2 || 0,
+    criteria_2: operational?.criteria_id,
   }
   const [open, setOpen] = useState(false)
   const {
@@ -59,38 +66,51 @@ export const EditModal = ({ vector: editVector }) => {
     air_velocity,
     area_m2,
     fix_q,
+    power_input_2,
+    air_velocity_2,
+    area_m2_2,
+    fix_q_2,
     area,
     sub_area,
     activity,
     criteria,
+    criteria_2,
     onInputChange,
     formState,
     onResetForm,
   } = useForm(formData)
-
-  const criterias = useCriteriaStore((state) => state.criteria)
-  const areas = useAreaStore((state) => state.areas)
-  const subareas = useSubAreaStore((state) => state.subareas)
-  const activitys = useActivityStore((state) => state.activity)
-  const { uid } = useAuthStore((state) => state.uid)
-  const putVector = useVectorStore((state) => state.putVector)
   const handleOpen = () => setOpen(true)
   const handleClose = () => {
     onResetForm()
     setOpen(false)
   }
+  const criterias = useCriteriaStore((state) => state.criteria)
+  const areas = useAreaStore((state) => state.areas)
+  const subareas = useSubAreaStore((state) => state.subareas)
+  const activitys = useActivityStore((state) => state.activity)
+  const { uid } = useAuthStore((state) => state.uid)
+  const { putOperationalStreet, putVector } = useVectorStore((state) => state)
   const disabled = (valor = '') => {
     const disable = criterias
       .filter((x) => x.id === valor)
       .map((x) => x.name)[0]
     return { disable }
   }
+  const disable = disabled(criteria)
+  const disable2 = disabled(criteria_2)
   const criteriasfilter = criterias.filter((c) => c.type_vector !== 2)
+  const filterCriteria = criterias.find((c) => c.name === 'm3/kW')
 
-  const { disable } = disabled(criteria)
-  const transform = transformGraphs(editVector)
-  const { newResult } = calculateCriteria(transform, disable, formState)
+  const { newResult } = calculateCriteriaOS2(
+    valueKnobs,
+    disable,
+    formState,
+    disable2,
+    valueEquipVector,
+    filterCriteria?.value
+  )
   const transformedData = transformData(newResult)
+
   const onSubmit = async (e) => {
     e.preventDefault()
     const vector = {
@@ -105,24 +125,31 @@ export const EditModal = ({ vector: editVector }) => {
       area_m2: formState.area_m2,
       fix_q: formState.fix_q,
       availability: formState.availability,
+      type_vector: 2,
     }
-    if (
-      (disable === 'Fix Q' && formState.fix_q !== 0) ||
-      ((disable === 'm/s' || disable === 'ft/m') &&
-        formState.air_velocity !== 0 &&
-        formState.area_m2 !== 0) ||
-      ((disable === 'm3/kW' || disable === 'cfm/HP') && formState.power_input)
-    ) {
-      putVector(editVector.id, vector, transformedData, editVector)
-
-      onResetForm()
-      reverseTransformData(transformedData.newData)
-      setOpen(false)
-    } else {
-      putVector(editVector.id, vector, transformedData, editVector)
+    const operational_street = {
+      id: operational.id,
+      criteria_id: formState.criteria_2,
+      power_input_2: formState.power_input_2,
+      air_velocity_2: formState.air_velocity_2,
+      area_m2_2: formState.area_m2_2,
+      fix_q_2: formState.fix_q_2,
     }
+    putVector(editVector.id, vector, transformedData, editVector)
+    putOperationalStreet(valueKnobs, valueEquipVector, operational_street)
+    setOpen(false)
   }
-
+  useEffect(() => {
+    getOperationalStreest(editVector.id)
+      .then((res) => {
+        setOperational(res.data.operationalStreets)
+        setValueKnobs2(res.data.equipVectorValue)
+        setValueEquipVector2(res.data.operationalStreetsValues)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
   return (
     <>
       <IconButton color='warning' size='small' onClick={handleOpen}>
@@ -210,7 +237,9 @@ export const EditModal = ({ vector: editVector }) => {
                   symbol={'KW'}
                   type={'number'}
                   min={0}
-                  disable={disable !== 'm3/kW' && disable !== 'cfm/HP'}
+                  disable={
+                    disable.disable !== 'm3/kW' && disable.disable !== 'cfm/HP'
+                  }
                   value={power_input}
                   onInputChange={onInputChange}
                 />
@@ -232,7 +261,9 @@ export const EditModal = ({ vector: editVector }) => {
                     symbol={'m/s'}
                     type={'number'}
                     min={0}
-                    disable={disable !== 'm/s' && disable !== 'ft/m'}
+                    disable={
+                      disable.disable !== 'm/s' && disable.disable !== 'ft/m'
+                    }
                     value={air_velocity}
                     onInputChange={onInputChange}
                   />
@@ -244,7 +275,9 @@ export const EditModal = ({ vector: editVector }) => {
                     title={'Area m2'}
                     type={'number'}
                     min={0}
-                    disable={disable !== 'm/s' && disable !== 'ft/m'}
+                    disable={
+                      disable.disable !== 'm/s' && disable.disable !== 'ft/m'
+                    }
                     value={area_m2}
                     onInputChange={onInputChange}
                   />
@@ -257,9 +290,87 @@ export const EditModal = ({ vector: editVector }) => {
                   title={'Fix Q'}
                   symbol={'m3/s'}
                   type={'number'}
-                  disable={disable !== 'Fix Q'}
+                  disable={disable.disable !== 'Fix Q'}
                   min={0}
                   value={fix_q}
+                  onInputChange={onInputChange}
+                />
+              </Grid>
+              <Grid item>
+                <SelectOption
+                  value={criteria_2}
+                  onInputChange={onInputChange}
+                  title={'Criteria 2'}
+                  name={'criteria_2'}
+                  size={180}
+                  data={criteriasfilter}
+                />
+              </Grid>
+              <Grid item>
+                <TextFieldCustom
+                  name={'power_input_2'}
+                  size={145}
+                  title={'Power Input 2'}
+                  symbol={'KW'}
+                  type={'number'}
+                  min={0}
+                  disable={
+                    disable2.disable !== 'm3/kW' &&
+                    disable2.disable !== 'cfm/HP'
+                  }
+                  value={power_input_2}
+                  onInputChange={onInputChange}
+                />
+              </Grid>
+              <Grid
+                item
+                sx={{
+                  ml: 2,
+                  display: 'flex',
+                  border: 'solid #000 1px',
+                  mt: 1,
+                }}
+              >
+                <Grid item sx={{ margin: '6px 6px 10px -6px' }}>
+                  <TextFieldCustom
+                    name={'air_velocity_2'}
+                    size={145}
+                    title={'Air Velocity 2'}
+                    symbol={'m/s'}
+                    type={'number'}
+                    min={0}
+                    disable={
+                      disable2.disable !== 'm/s' && disable2.disable !== 'ft/m'
+                    }
+                    value={air_velocity_2}
+                    onInputChange={onInputChange}
+                  />
+                </Grid>
+                <Grid item sx={{ margin: '6px 10px 10px 6px' }}>
+                  <TextFieldCustom
+                    name={'area_m2_2'}
+                    size={140}
+                    title={'Area m2 2'}
+                    type={'number'}
+                    min={0}
+                    disable={
+                      disable2.disable !== 'm/s' && disable2.disable !== 'ft/m'
+                    }
+                    value={area_m2_2}
+                    onInputChange={onInputChange}
+                  />
+                </Grid>
+              </Grid>
+              <Grid item>
+                <TextFieldCustom
+                  name={'fix_q_2'}
+                  size={140}
+                  title={'Fix Q 2'}
+                  symbol={'m3/s'}
+                  type={'number'}
+                  disable={disable2.disable !== 'Fix Q'}
+                  min={0}
+                  value={fix_q_2}
                   onInputChange={onInputChange}
                 />
               </Grid>
@@ -272,7 +383,12 @@ export const EditModal = ({ vector: editVector }) => {
               }}
             >
               <Grid item sx={{ mt: 3 }}>
-                <Knobs transform={transform} />
+                <KnobsFor2
+                  setValueKnobs={setValueKnobs}
+                  setValueEquipVector={setValueEquipVector}
+                  valueKnobs2={valueKnobs2}
+                  valueEquipVector2={valueEquipVector2}
+                />
               </Grid>
               <Grid
                 container
